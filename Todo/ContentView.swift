@@ -130,12 +130,12 @@ struct TodoRowView: View {
             get: { todo.isCompleted },
             set: { _ in onToggle() }
         )) {
-            Text(todo.title)
+            Text(todo.title ?? "")
                 .strikethrough(todo.isCompleted)
                 .foregroundStyle(todo.isCompleted ? .secondary : .primary)
         }
         .toggleStyle(ChecklistToggleStyle())
-        .accessibilityLabel(todo.title)
+        .accessibilityLabel(todo.title ?? "Todo")
         .accessibilityHint(todo.isCompleted ? "Completed. Double tap to mark as not completed" : "Not completed. Double tap to mark as completed")
         .accessibilityValue(todo.isCompleted ? "Completed" : "Not completed")
     }
