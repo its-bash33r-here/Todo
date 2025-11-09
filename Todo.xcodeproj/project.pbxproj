@@ -254,6 +254,7 @@
 				ENABLE_PREVIEWS = YES;
 				ENABLE_USER_SELECTED_FILES = readonly;
 				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_KEY_CFBundleIconName = AppIcon;
 				"INFOPLIST_KEY_ITSAppUsesNonExemptEncryption[sdk=iphoneos*]" = NO;
 				"INFOPLIST_KEY_ITSAppUsesNonExemptEncryption[sdk=iphonesimulator*]" = NO;
 				"INFOPLIST_KEY_ITSAppUsesNonExemptEncryption[sdk=macosx*]" = NO;
@@ -303,6 +304,7 @@
 				ENABLE_PREVIEWS = YES;
 				ENABLE_USER_SELECTED_FILES = readonly;
 				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_KEY_CFBundleIconName = AppIcon;
 				"INFOPLIST_KEY_ITSAppUsesNonExemptEncryption[sdk=iphoneos*]" = NO;
 				"INFOPLIST_KEY_ITSAppUsesNonExemptEncryption[sdk=iphonesimulator*]" = NO;
 				"INFOPLIST_KEY_ITSAppUsesNonExemptEncryption[sdk=macosx*]" = NO;
