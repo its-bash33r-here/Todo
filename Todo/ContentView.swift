@@ -27,25 +27,21 @@ struct ContentView: View {
     var body: some View {
         NavigationStack {
             List {
-                if !todos.isEmpty {
-                    Section {
-                        ForEach(todos) { todo in
-                            TodoRowView(todo: todo, onToggle: {
-                                toggleComplete(todo: todo)
-                            })
-                        }
-                        .onDelete(perform: deleteTodos)
+                if todos.isEmpty {
+                    ContentUnavailableView {
+                        Label("No Todos", systemImage: "checklist")
+                    } description: {
+                        Text("Add your first todo item to get started")
                     }
+                    .listRowInsets(EdgeInsets())
+                    .listRowBackground(Color.clear)
                 } else {
-                    Section {
-                        ContentUnavailableView {
-                            Label("No Todos", systemImage: "checklist")
-                        } description: {
-                            Text("Add your first todo item to get started")
-                        }
-                        .listRowInsets(EdgeInsets())
-                        .listRowBackground(Color.clear)
+                    ForEach(todos) { todo in
+                        TodoRowView(todo: todo, onToggle: {
+                            toggleComplete(todo: todo)
+                        })
                     }
+                    .onDelete(perform: deleteTodos)
                 }
             }
             .safeAreaInset(edge: .bottom) {
@@ -92,31 +88,25 @@ struct ContentView: View {
             return
         }
         
-        withAnimation {
-            let newTodo = TodoItem(context: viewContext)
-            newTodo.title = trimmedTitle
-            newTodo.isCompleted = false
-            newTodo.createdAt = Date()
-            
-            newTodoTitle = ""
-            isTextFieldFocused = false
-            
-            saveContext()
-        }
+        let newTodo = TodoItem(context: viewContext)
+        newTodo.title = trimmedTitle
+        newTodo.isCompleted = false
+        newTodo.createdAt = Date()
+        
+        newTodoTitle = ""
+        isTextFieldFocused = false
+        
+        saveContext()
     }
     
     private func toggleComplete(todo: TodoItem) {
-        withAnimation {
-            todo.isCompleted.toggle()
-            saveContext()
-        }
+        todo.isCompleted.toggle()
+        saveContext()
     }
 
     private func deleteTodos(offsets: IndexSet) {
-        withAnimation {
-            offsets.map { todos[$0] }.forEach(viewContext.delete)
-            saveContext()
-        }
+        offsets.map { todos[$0] }.forEach(viewContext.delete)
+        saveContext()
     }
     
     private func saveContext() {
@@ -140,27 +130,31 @@ struct TodoRowView: View {
             get: { todo.isCompleted },
             set: { _ in onToggle() }
         )) {
-            Text(todo.title ?? "")
+            Text(todo.title)
                 .strikethrough(todo.isCompleted)
                 .foregroundStyle(todo.isCompleted ? .secondary : .primary)
         }
         .toggleStyle(ChecklistToggleStyle())
-        .accessibilityLabel(todo.title ?? "Todo")
+        .accessibilityLabel(todo.title)
         .accessibilityHint(todo.isCompleted ? "Completed. Double tap to mark as not completed" : "Not completed. Double tap to mark as completed")
         .accessibilityValue(todo.isCompleted ? "Completed" : "Not completed")
     }
 }
 
 struct ChecklistToggleStyle: ToggleStyle {
+    #if os(iOS)
+    private static let hapticGenerator: UIImpactFeedbackGenerator = {
+        let generator = UIImpactFeedbackGenerator(style: .light)
+        generator.prepare()
+        return generator
+    }()
+    #endif
+    
     func makeBody(configuration: Configuration) -> some View {
         Button(action: {
-            withAnimation(.spring(response: 0.3, dampingFraction: 0.6)) {
-                configuration.isOn.toggle()
-            }
+            configuration.isOn.toggle()
             #if os(iOS)
-            let generator = UIImpactFeedbackGenerator(style: .light)
-            generator.prepare()
-            generator.impactOccurred()
+            ChecklistToggleStyle.hapticGenerator.impactOccurred()
             #endif
         }) {
             HStack(spacing: 12) {
